@@ -8,7 +8,7 @@ Though it is currently designed for [Caribbean Legend](https://store.steampowere
 
 ### How do I make mods for Caribbean Legend?
 
-Please refer to [this wiki](linkherelmfao).
+Please refer to [this wiki](https://github.com/nkrapivin/stormworkshoptool/wiki).
 
 ### Why .NET Framework? Why WinForms of all things?
 
