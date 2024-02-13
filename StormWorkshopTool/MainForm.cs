@@ -277,6 +277,21 @@ namespace StormWorkshopTool
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            var appId = 0u;
+            using (var dlg = new AppIDForm())
+            {
+                var result = dlg.ShowDialog(this);
+                if (result != DialogResult.Yes)
+                {
+                    Application.Exit();
+                    return;
+                }
+
+                appId = dlg.ChosenAppId;
+            }
+
+            File.WriteAllText("steam_appid.txt", appId.ToString(), System.Text.Encoding.ASCII);
+
             if (!SteamAPI.Init())
             {
                 ShowError("Failed to initialize the Steam API");
@@ -296,6 +311,13 @@ namespace StormWorkshopTool
                 Application.Exit();
                 return;
             }
+
+            if (AppID != (AppId_t)appId)
+            {
+                ShowError($"GetAppID result ({AppID}) does not match expected App ID ({appId}), expect bugs!");
+            }
+
+            Text += $" (as App ID {AppID})";
 
             SteamID = SteamUser.GetSteamID();
             if (!SteamID.IsValid())
@@ -421,28 +443,37 @@ namespace StormWorkshopTool
                 return;
             }
 
-            if (!SteamUGC.SetItemTitle(update, item.Title))
+            if (!string.IsNullOrEmpty(item.Title))
             {
-                ShowError("SetItemTitle failed");
-                return;
+                if (!SteamUGC.SetItemTitle(update, item.Title))
+                {
+                    ShowError("SetItemTitle failed");
+                    return;
+                }
             }
 
-            if (!SteamUGC.SetItemDescription(update, item.Description))
+            if (!string.IsNullOrWhiteSpace(item.Description))
             {
-                ShowError("SetItemDescription failed");
-                return;
+                if (!SteamUGC.SetItemDescription(update, item.Description))
+                {
+                    ShowError("SetItemDescription failed");
+                    return;
+                }
             }
-
+            
             if (!SteamUGC.SetItemVisibility(update, item.Visibility))
             {
                 ShowError("SetItemVisibility failed");
                 return;
             }
 
-            if (!SteamUGC.SetItemContent(update, item.ContentsFolder))
+            if (!string.IsNullOrWhiteSpace(item.ContentsFolder))
             {
-                ShowError("SetItemContent failed");
-                return;
+                if (!SteamUGC.SetItemContent(update, item.ContentsFolder))
+                {
+                    ShowError("SetItemContent failed");
+                    return;
+                }
             }
 
             if (item.Preview != null)
