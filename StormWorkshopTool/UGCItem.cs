@@ -13,6 +13,19 @@ namespace StormWorkshopTool
     /// </summary>
     internal class UGCItem
     {
+        /// <summary>
+        /// Describes what's changed in this UGCItem
+        /// </summary>
+        [Flags]
+        public enum DirtyFlags
+        {
+            None = 0,
+            Title = 1 << 0,
+            Description = 1 << 1,
+            Preview = 1 << 2,
+            All = Title | Description | Preview
+        }
+
         public string Title { get; set; }
         public string Description { get; set; }
         public string ContentsFolder { get; set; }
@@ -22,5 +35,6 @@ namespace StormWorkshopTool
         public PublishedFileId_t Id { get; set; }
         public UGCUpdateHandle_t UpdateHandle { get; set; }
         public ERemoteStoragePublishedFileVisibility Visibility { get; set; }
+        public DirtyFlags Dirty { get; set; }
     }
 }

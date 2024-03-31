@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Steamworks;
@@ -31,6 +32,18 @@ namespace StormWorkshopTool
         private bool UILockState;
         private readonly ImageList UGCImageList = new ImageList();
 
+        public static void ProcessStart(string arg)
+        {
+            try
+            {
+                Process.Start(arg)?.Dispose();
+            }
+            catch { }
+        }
+
+        private void UpdateProgressLabel()
+            => ProgressLabel.Text = $"Fetching your items... (Page: {LoadPageIdx}, Preview pics: {PinnedCRs.Count} left)";
+
         private void SetUILockState(bool state)
         {
             CreateNewItemButton.Enabled = !state;
@@ -45,6 +58,7 @@ namespace StormWorkshopTool
             MyItemsListView.BeginUpdate();
             MyItemsListView.Clear();
             UGCImageList.ImageSize = new Size(128, 128);
+            UGCImageList.ColorDepth = ColorDepth.Depth32Bit;
             MyItemsListView.LargeImageList = UGCImageList;
             MyItemsListView.SmallImageList = UGCImageList;
             UGCImageList.Images.Clear();
@@ -77,20 +91,29 @@ namespace StormWorkshopTool
 
         private void SetAvatarToUI(int imgHandle)
         {
-            if (!SteamUtils.GetImageSize(imgHandle, out uint width, out uint height))
+            if (!SteamUtils.GetImageSize(imgHandle, out var width, out var height))
                 return;
 
             if ((width * height) <= 0)
                 return;
 
-            var buff = new byte[width * height * sizeof(int)];
-            if (!SteamUtils.GetImageRGBA(imgHandle, buff, buff.Length))
+            var bufflen = (int)width * (int)height * sizeof(int);
+            var buff = new byte[bufflen];
+            if (!SteamUtils.GetImageRGBA(imgHandle, buff, bufflen))
                 return;
+
+            // swap color channels for GDI+ compat
+            for (var i = 0; i < bufflen; i += 4)
+            {
+                var b0 = buff[i];
+                buff[i] = buff[i + 2];
+                buff[i + 2] = b0;
+            }
 
             var img = new Bitmap((int)width, (int)height, PixelFormat.Format32bppArgb);
             //{
                 var data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height), ImageLockMode.WriteOnly, img.PixelFormat);
-                Marshal.Copy(buff, 0, data.Scan0, buff.Length);
+                Marshal.Copy(buff, 0, data.Scan0, bufflen);
                 img.UnlockBits(data);
                 AvatarPictureBox.Image?.Dispose();
                 AvatarPictureBox.Image = img;
@@ -115,19 +138,26 @@ namespace StormWorkshopTool
 
             if (param.m_bUserNeedsToAcceptWorkshopLegalAgreement)
             {
-                Process.Start("https://steamcommunity.com/sharedfiles/workshoplegalagreement")?.Dispose();
+                ProcessStart("https://steamcommunity.com/sharedfiles/workshoplegalagreement");
             }
         }
 
         private void OnRemoteStorageDownloadUGC(RemoteStorageDownloadUGCResult_t param, bool bIOFailure)
         {
             PinnedCRs.Remove(param.m_hFile);
+            UpdateProgressLabel();
 
-            if (param.m_eResult != EResult.k_EResultOK)
-                return; // silently ignore missing preview files
+            if (param.m_eResult != EResult.k_EResultOK || bIOFailure)
+            {
+                Debug.WriteLine($"UGC remote download fail with eresult {param.m_eResult}");
+                return;
+            }
 
             if (param.m_nSizeInBytes <= 0)
+            {
+                Debug.WriteLine($"UGC remote download fail, file is empty");
                 return;
+            }
 
             var bytes = new byte[param.m_nSizeInBytes];
             SteamRemoteStorage.UGCRead(
@@ -214,6 +244,8 @@ namespace StormWorkshopTool
                 return;
             }
 
+            SteamUGC.SetLanguage(handle, "english");
+
             var call = SteamUGC.SendQueryUGCRequest(handle);
             if (call == SteamAPICall_t.Invalid)
             {
@@ -222,6 +254,8 @@ namespace StormWorkshopTool
                 return;
             }
             CROnUGCQueryCompleted.Set(call);
+
+            UpdateProgressLabel();
         }
 
         public MainForm()
@@ -256,6 +290,8 @@ namespace StormWorkshopTool
                 return;
             }
 
+            SteamUGC.SetLanguage(handle, "english");
+
             var call = SteamUGC.SendQueryUGCRequest(handle);
             if (call == SteamAPICall_t.Invalid)
             {
@@ -272,7 +308,7 @@ namespace StormWorkshopTool
             UGCImageList.Images.Clear();
             MyItemsListView.EndUpdate();
             CROnUGCQueryCompleted.Set(call);
-            ProgressLabel.Text = "Fetching your items...";
+            UpdateProgressLabel();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -343,6 +379,8 @@ namespace StormWorkshopTool
 
             // now we can enable the timer and dispatch callbacks/callresults
             SteamTimer.Enabled = true;
+
+            ToolVersionLabel.Text += Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private void SteamTimer_Tick(object sender, EventArgs e)
@@ -443,7 +481,13 @@ namespace StormWorkshopTool
                 return;
             }
 
-            if (!string.IsNullOrEmpty(item.Title))
+            if (!SteamUGC.SetItemUpdateLanguage(update, "english"))
+            {
+                ShowError("SetItemUpdateLanguage failed");
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(item.Title) && item.Dirty.HasFlag(UGCItem.DirtyFlags.Title))
             {
                 if (!SteamUGC.SetItemTitle(update, item.Title))
                 {
@@ -452,7 +496,7 @@ namespace StormWorkshopTool
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(item.Description))
+            if (!string.IsNullOrWhiteSpace(item.Description) && item.Dirty.HasFlag(UGCItem.DirtyFlags.Description))
             {
                 if (!SteamUGC.SetItemDescription(update, item.Description))
                 {
@@ -476,11 +520,12 @@ namespace StormWorkshopTool
                 }
             }
 
-            if (item.Preview != null)
+            if (item.Preview != null && item.Dirty.HasFlag(UGCItem.DirtyFlags.Preview))
             {
+                var tmpname = IsPNGHeader(item.Preview) ? "0a_preview.png" : "0a_preview.jpg";
                 var tmpfile = Path.Combine(
                     Path.GetTempPath(),
-                    IsPNGHeader(item.Preview) ? "0a_preview.png" : "0a_preview.jpg"
+                    tmpname
                 );
 
                 File.WriteAllBytes(tmpfile, item.Preview);
@@ -561,7 +606,7 @@ namespace StormWorkshopTool
 
         private void GameWorkshopLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start($"https://steamcommunity.com/app/{AppID}/workshop/")?.Dispose();
+            ProcessStart($"https://steamcommunity.com/app/{AppID}/workshop/");
             ((LinkLabel)sender).LinkVisited = true;
         }
 

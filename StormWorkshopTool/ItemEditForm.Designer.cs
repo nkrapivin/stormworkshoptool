@@ -49,6 +49,8 @@
             this.IDLabel = new System.Windows.Forms.Label();
             this.IDTextBox = new System.Windows.Forms.TextBox();
             this.EditWebsiteLinkLabel = new System.Windows.Forms.LinkLabel();
+            this.EditDescriptionCheckBox = new System.Windows.Forms.CheckBox();
+            this.EditTitleCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewImagePictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,7 +62,7 @@
             this.TitleTextBox.MaxLength = 120;
             this.TitleTextBox.Name = "TitleTextBox";
             this.TitleTextBox.Size = new System.Drawing.Size(256, 20);
-            this.TitleTextBox.TabIndex = 3;
+            this.TitleTextBox.TabIndex = 4;
             this.TitleTextBox.Text = "Super Awesome Mod";
             // 
             // TitleLabel
@@ -80,7 +82,7 @@
             this.DescriptionLabel.Location = new System.Drawing.Point(277, 15);
             this.DescriptionLabel.Name = "DescriptionLabel";
             this.DescriptionLabel.Size = new System.Drawing.Size(66, 13);
-            this.DescriptionLabel.TabIndex = 10;
+            this.DescriptionLabel.TabIndex = 11;
             this.DescriptionLabel.Text = "Description: ";
             // 
             // DescriptionRichTextBox
@@ -91,7 +93,7 @@
             this.DescriptionRichTextBox.MaxLength = 7992;
             this.DescriptionRichTextBox.Name = "DescriptionRichTextBox";
             this.DescriptionRichTextBox.Size = new System.Drawing.Size(529, 168);
-            this.DescriptionRichTextBox.TabIndex = 11;
+            this.DescriptionRichTextBox.TabIndex = 13;
             this.DescriptionRichTextBox.Text = "Super Awesome Description\nCan have multiple lines!\nAwesome!\n\n\n=^-^=";
             // 
             // VisibilityLabel
@@ -100,7 +102,7 @@
             this.VisibilityLabel.Location = new System.Drawing.Point(12, 93);
             this.VisibilityLabel.Name = "VisibilityLabel";
             this.VisibilityLabel.Size = new System.Drawing.Size(49, 13);
-            this.VisibilityLabel.TabIndex = 4;
+            this.VisibilityLabel.TabIndex = 5;
             this.VisibilityLabel.Text = "Visibility: ";
             // 
             // VisibilityComboBox
@@ -117,7 +119,7 @@
             this.VisibilityComboBox.Location = new System.Drawing.Point(15, 109);
             this.VisibilityComboBox.Name = "VisibilityComboBox";
             this.VisibilityComboBox.Size = new System.Drawing.Size(256, 21);
-            this.VisibilityComboBox.TabIndex = 5;
+            this.VisibilityComboBox.TabIndex = 6;
             // 
             // PreviewImageLabel
             // 
@@ -125,7 +127,7 @@
             this.PreviewImageLabel.Location = new System.Drawing.Point(12, 172);
             this.PreviewImageLabel.Name = "PreviewImageLabel";
             this.PreviewImageLabel.Size = new System.Drawing.Size(225, 13);
-            this.PreviewImageLabel.TabIndex = 9;
+            this.PreviewImageLabel.TabIndex = 10;
             this.PreviewImageLabel.Text = "Preview Image (Click or drag and drop to set): ";
             // 
             // PreviewImagePictureBox
@@ -150,7 +152,7 @@
             this.PublishButton.Location = new System.Drawing.Point(734, 508);
             this.PublishButton.Name = "PublishButton";
             this.PublishButton.Size = new System.Drawing.Size(75, 23);
-            this.PublishButton.TabIndex = 17;
+            this.PublishButton.TabIndex = 19;
             this.PublishButton.Text = "Publish";
             this.PublishButton.UseVisualStyleBackColor = true;
             this.PublishButton.Click += new System.EventHandler(this.PublishButton_Click);
@@ -167,7 +169,7 @@
             this.ContentsFolderLabel.Location = new System.Drawing.Point(12, 133);
             this.ContentsFolderLabel.Name = "ContentsFolderLabel";
             this.ContentsFolderLabel.Size = new System.Drawing.Size(81, 13);
-            this.ContentsFolderLabel.TabIndex = 6;
+            this.ContentsFolderLabel.TabIndex = 7;
             this.ContentsFolderLabel.Text = "Contents folder:";
             // 
             // ContentsFolderTextBox
@@ -178,7 +180,7 @@
             this.ContentsFolderTextBox.Location = new System.Drawing.Point(15, 149);
             this.ContentsFolderTextBox.Name = "ContentsFolderTextBox";
             this.ContentsFolderTextBox.Size = new System.Drawing.Size(218, 20);
-            this.ContentsFolderTextBox.TabIndex = 7;
+            this.ContentsFolderTextBox.TabIndex = 8;
             this.ContentsFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.ContentsFolderTextBox_DragDrop);
             this.ContentsFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.ContentsFolderTextBox_DragEnter);
             // 
@@ -188,7 +190,7 @@
             this.ContentsFolderButton.Location = new System.Drawing.Point(239, 149);
             this.ContentsFolderButton.Name = "ContentsFolderButton";
             this.ContentsFolderButton.Size = new System.Drawing.Size(32, 20);
-            this.ContentsFolderButton.TabIndex = 8;
+            this.ContentsFolderButton.TabIndex = 9;
             this.ContentsFolderButton.Text = "...";
             this.ContentsFolderButton.UseVisualStyleBackColor = true;
             this.ContentsFolderButton.Click += new System.EventHandler(this.ContentsFolderButton_Click);
@@ -201,7 +203,7 @@
             this.ChangelogLabel.Location = new System.Drawing.Point(277, 202);
             this.ChangelogLabel.Name = "ChangelogLabel";
             this.ChangelogLabel.Size = new System.Drawing.Size(61, 13);
-            this.ChangelogLabel.TabIndex = 12;
+            this.ChangelogLabel.TabIndex = 14;
             this.ChangelogLabel.Text = "Changelog:";
             // 
             // ChangelogRichTextBox
@@ -212,7 +214,7 @@
             this.ChangelogRichTextBox.Location = new System.Drawing.Point(280, 218);
             this.ChangelogRichTextBox.Name = "ChangelogRichTextBox";
             this.ChangelogRichTextBox.Size = new System.Drawing.Size(529, 284);
-            this.ChangelogRichTextBox.TabIndex = 13;
+            this.ChangelogRichTextBox.TabIndex = 15;
             this.ChangelogRichTextBox.Text = resources.GetString("ChangelogRichTextBox.Text");
             // 
             // AgreementPrefixLabel
@@ -223,7 +225,7 @@
             this.AgreementPrefixLabel.Location = new System.Drawing.Point(12, 518);
             this.AgreementPrefixLabel.Name = "AgreementPrefixLabel";
             this.AgreementPrefixLabel.Size = new System.Drawing.Size(193, 13);
-            this.AgreementPrefixLabel.TabIndex = 15;
+            this.AgreementPrefixLabel.TabIndex = 17;
             this.AgreementPrefixLabel.Text = "By submitting this item, you agree to the";
             // 
             // AgreementLinkLabel
@@ -234,7 +236,7 @@
             this.AgreementLinkLabel.Location = new System.Drawing.Point(211, 518);
             this.AgreementLinkLabel.Name = "AgreementLinkLabel";
             this.AgreementLinkLabel.Size = new System.Drawing.Size(163, 13);
-            this.AgreementLinkLabel.TabIndex = 16;
+            this.AgreementLinkLabel.TabIndex = 18;
             this.AgreementLinkLabel.TabStop = true;
             this.AgreementLinkLabel.Text = "Steam workshop terms of service";
             this.AgreementLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AgreementLinkLabel_LinkClicked);
@@ -267,16 +269,40 @@
             this.EditWebsiteLinkLabel.Location = new System.Drawing.Point(12, 505);
             this.EditWebsiteLinkLabel.Name = "EditWebsiteLinkLabel";
             this.EditWebsiteLinkLabel.Size = new System.Drawing.Size(223, 13);
-            this.EditWebsiteLinkLabel.TabIndex = 14;
+            this.EditWebsiteLinkLabel.TabIndex = 16;
             this.EditWebsiteLinkLabel.TabStop = true;
             this.EditWebsiteLinkLabel.Text = "Edit this item on the Steam Workshop website";
             this.EditWebsiteLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.EditWebsiteLinkLabel_LinkClicked);
+            // 
+            // EditDescriptionCheckBox
+            // 
+            this.EditDescriptionCheckBox.AutoSize = true;
+            this.EditDescriptionCheckBox.Location = new System.Drawing.Point(349, 14);
+            this.EditDescriptionCheckBox.Name = "EditDescriptionCheckBox";
+            this.EditDescriptionCheckBox.Size = new System.Drawing.Size(139, 17);
+            this.EditDescriptionCheckBox.TabIndex = 12;
+            this.EditDescriptionCheckBox.Text = "Update the description?";
+            this.EditDescriptionCheckBox.UseVisualStyleBackColor = true;
+            this.EditDescriptionCheckBox.CheckedChanged += new System.EventHandler(this.EditDescriptionCheckBox_CheckedChanged);
+            // 
+            // EditTitleCheckBox
+            // 
+            this.EditTitleCheckBox.AutoSize = true;
+            this.EditTitleCheckBox.Location = new System.Drawing.Point(51, 53);
+            this.EditTitleCheckBox.Name = "EditTitleCheckBox";
+            this.EditTitleCheckBox.Size = new System.Drawing.Size(104, 17);
+            this.EditTitleCheckBox.TabIndex = 3;
+            this.EditTitleCheckBox.Text = "Update the title?";
+            this.EditTitleCheckBox.UseVisualStyleBackColor = true;
+            this.EditTitleCheckBox.CheckedChanged += new System.EventHandler(this.EditTitleCheckBox_CheckedChanged);
             // 
             // ItemEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(821, 552);
+            this.Controls.Add(this.EditTitleCheckBox);
+            this.Controls.Add(this.EditDescriptionCheckBox);
             this.Controls.Add(this.EditWebsiteLinkLabel);
             this.Controls.Add(this.IDTextBox);
             this.Controls.Add(this.IDLabel);
@@ -329,5 +355,7 @@
         private System.Windows.Forms.Label IDLabel;
         private System.Windows.Forms.TextBox IDTextBox;
         private System.Windows.Forms.LinkLabel EditWebsiteLinkLabel;
+        private System.Windows.Forms.CheckBox EditDescriptionCheckBox;
+        private System.Windows.Forms.CheckBox EditTitleCheckBox;
     }
 }

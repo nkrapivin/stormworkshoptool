@@ -15,6 +15,7 @@ namespace StormWorkshopTool
     {
         private readonly CommonOpenFileDialog ContentsFolderCommonOpenFileDialog = new CommonOpenFileDialog();
         internal UGCItem CurrentUGCItem;
+        private bool IsPreviewDirty, IsExisting;
 
         public ItemEditForm()
         {
@@ -28,6 +29,8 @@ namespace StormWorkshopTool
             ContentsFolderCommonOpenFileDialog.EnsureValidNames = true;
             // disable this label, will be re-enabled in SetFromExisting
             EditWebsiteLinkLabel.Visible = false;
+            EditDescriptionCheckBox.Visible = false;
+            EditTitleCheckBox.Visible = false;
         }
 
         private bool IsValidDirectory(string path)
@@ -82,6 +85,11 @@ namespace StormWorkshopTool
             }
 
             EditWebsiteLinkLabel.Visible = true;
+            EditDescriptionCheckBox.Visible = true;
+            EditTitleCheckBox.Visible = true;
+            DescriptionRichTextBox.Enabled = false;
+            TitleTextBox.Enabled = false;
+            IsExisting = true;
         }
 
         private void PreviewImagePictureBox_DragEnter(object sender, DragEventArgs e)
@@ -99,11 +107,13 @@ namespace StormWorkshopTool
             if (imgs == null || imgs.Length <= 0)
                 return;
 
-            var img = Image.FromFile(imgs[0]);
-            //{
+            using (var img = Image.FromFile(imgs[0]))
+            {
+                var bitmap = new Bitmap(img);
                 that.Image?.Dispose();
-                that.Image = img;
-            //}
+                that.Image = bitmap;
+                IsPreviewDirty = true;
+            }
         }
 
         private void PreviewImagePictureBox_Click(object sender, EventArgs e)
@@ -114,11 +124,13 @@ namespace StormWorkshopTool
         private void PreviewImageOpenFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             var that = (OpenFileDialog)sender;
-            var img = Image.FromFile(that.FileName);
-            //{
+            using (var img = Image.FromFile(that.FileName))
+            {
+                var bitmap = new Bitmap(img);
                 PreviewImagePictureBox.Image?.Dispose();
-                PreviewImagePictureBox.Image = img;
-            //}
+                PreviewImagePictureBox.Image = bitmap;
+                IsPreviewDirty = true;
+            }
         }
 
         private void ContentsFolderButton_Click(object sender, EventArgs e)
@@ -203,20 +215,55 @@ namespace StormWorkshopTool
             CurrentUGCItem.ContentsFolder = ContentsFolderTextBox.Text;
             CurrentUGCItem.Preview = img;
 
+            CurrentUGCItem.Dirty = UGCItem.DirtyFlags.None;
+
+            if (IsExisting)
+            {
+                if (EditDescriptionCheckBox.Checked)
+                {
+                    CurrentUGCItem.Dirty |= UGCItem.DirtyFlags.Description;
+                }
+
+                if (EditTitleCheckBox.Checked)
+                {
+                    CurrentUGCItem.Dirty |= UGCItem.DirtyFlags.Title;
+                }
+
+                if (IsPreviewDirty)
+                {
+                    CurrentUGCItem.Dirty |= UGCItem.DirtyFlags.Preview;
+                }
+            }
+            else
+            {
+                // for new items we must update all the fields...
+                CurrentUGCItem.Dirty |= UGCItem.DirtyFlags.All;
+            }
+
             DialogResult = DialogResult.Yes;
             Close();
         }
 
         private void AgreementLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("https://steamcommunity.com/sharedfiles/workshoplegalagreement")?.Dispose();
+            MainForm.ProcessStart("https://steamcommunity.com/sharedfiles/workshoplegalagreement");
             ((LinkLabel)sender).LinkVisited = true;
         }
 
         private void EditWebsiteLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start($"https://steamcommunity.com/sharedfiles/filedetails/?id={IDTextBox.Text}")?.Dispose();
+            MainForm.ProcessStart($"https://steamcommunity.com/sharedfiles/filedetails/?id={IDTextBox.Text}");
             ((LinkLabel)sender).LinkVisited = true;
+        }
+
+        private void EditDescriptionCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            DescriptionRichTextBox.Enabled = EditDescriptionCheckBox.Checked;
+        }
+
+        private void EditTitleCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            TitleTextBox.Enabled = EditTitleCheckBox.Checked;
         }
     }
 }

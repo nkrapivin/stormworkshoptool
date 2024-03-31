@@ -39,6 +39,7 @@
             this.GameWorkshopLinkLabel = new System.Windows.Forms.LinkLabel();
             this.ProgressLabel = new System.Windows.Forms.Label();
             this.RefreshItemsButton = new System.Windows.Forms.Button();
+            this.ToolVersionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.AvatarPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -84,7 +85,7 @@
             this.MyItemsListView.Location = new System.Drawing.Point(12, 82);
             this.MyItemsListView.Name = "MyItemsListView";
             this.MyItemsListView.Size = new System.Drawing.Size(776, 356);
-            this.MyItemsListView.TabIndex = 5;
+            this.MyItemsListView.TabIndex = 6;
             this.MyItemsListView.UseCompatibleStateImageBehavior = false;
             this.MyItemsListView.ItemActivate += new System.EventHandler(this.MyItemsListView_ItemActivate);
             // 
@@ -94,7 +95,7 @@
             this.CreateNewItemButton.Location = new System.Drawing.Point(765, 53);
             this.CreateNewItemButton.Name = "CreateNewItemButton";
             this.CreateNewItemButton.Size = new System.Drawing.Size(23, 23);
-            this.CreateNewItemButton.TabIndex = 4;
+            this.CreateNewItemButton.TabIndex = 5;
             this.CreateNewItemButton.Text = "+";
             this.CreateNewItemButton.UseVisualStyleBackColor = true;
             this.CreateNewItemButton.Click += new System.EventHandler(this.CreateNewItemButton_Click);
@@ -116,7 +117,7 @@
             this.ProgressLabel.Location = new System.Drawing.Point(82, 51);
             this.ProgressLabel.Name = "ProgressLabel";
             this.ProgressLabel.Size = new System.Drawing.Size(0, 13);
-            this.ProgressLabel.TabIndex = 6;
+            this.ProgressLabel.TabIndex = 3;
             // 
             // RefreshItemsButton
             // 
@@ -124,16 +125,27 @@
             this.RefreshItemsButton.Location = new System.Drawing.Point(736, 53);
             this.RefreshItemsButton.Name = "RefreshItemsButton";
             this.RefreshItemsButton.Size = new System.Drawing.Size(23, 23);
-            this.RefreshItemsButton.TabIndex = 3;
+            this.RefreshItemsButton.TabIndex = 4;
             this.RefreshItemsButton.Text = "⟳";
             this.RefreshItemsButton.UseVisualStyleBackColor = true;
             this.RefreshItemsButton.Click += new System.EventHandler(this.RefreshItemsButton_Click);
+            // 
+            // ToolVersionLabel
+            // 
+            this.ToolVersionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ToolVersionLabel.AutoSize = true;
+            this.ToolVersionLabel.Location = new System.Drawing.Point(683, 9);
+            this.ToolVersionLabel.Name = "ToolVersionLabel";
+            this.ToolVersionLabel.Size = new System.Drawing.Size(72, 13);
+            this.ToolVersionLabel.TabIndex = 7;
+            this.ToolVersionLabel.Text = "Tool Version: ";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.ToolVersionLabel);
             this.Controls.Add(this.RefreshItemsButton);
             this.Controls.Add(this.ProgressLabel);
             this.Controls.Add(this.GameWorkshopLinkLabel);
@@ -166,6 +178,7 @@
         private System.Windows.Forms.LinkLabel GameWorkshopLinkLabel;
         private System.Windows.Forms.Label ProgressLabel;
         private System.Windows.Forms.Button RefreshItemsButton;
+        private System.Windows.Forms.Label ToolVersionLabel;
     }
 }
 
