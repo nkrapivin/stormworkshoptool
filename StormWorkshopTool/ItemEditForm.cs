@@ -51,8 +51,27 @@ namespace StormWorkshopTool
         {
             if (!IsValidDirectory(ContentsFolderTextBox.Text))
             {
-                MessageBox.Show(this, "Contents folder is empty or invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                if (IsExisting) // update request?
+                {
+                    // allow modmakers to push info-only edits without doing content updates
+                    var res = MessageBox.Show(this,
+                        "You are about to publish a mod update without any content changes. Are you sure?",
+                        "Question",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+                    if (res != DialogResult.Yes)
+                        return false; // did not explicitly confirm...
+                }
+                else
+                {
+                    // always reject, 1.0.0 mod submissions must be with content
+                    MessageBox.Show(this,
+                        "Contents folder is empty or invalid. For new mods you MUST specify a content folder.",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return false;
+                }
             }
 
             return true;
@@ -193,7 +212,7 @@ namespace StormWorkshopTool
                 {
                     // https://partner.steamgames.com/doc/api/ISteamUGC#SubmitItemUpdateResult_t
                     MessageBox.Show(this,
-                        "The preview image is too large, it must be less than 1 Megabyte.",
+                        "The preview image is too large, it must be less than 1 Megabyte. Try reducing resolution or details.",
                         "Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);

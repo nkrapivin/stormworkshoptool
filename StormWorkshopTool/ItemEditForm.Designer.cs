@@ -168,9 +168,9 @@
             this.ContentsFolderLabel.AutoSize = true;
             this.ContentsFolderLabel.Location = new System.Drawing.Point(12, 133);
             this.ContentsFolderLabel.Name = "ContentsFolderLabel";
-            this.ContentsFolderLabel.Size = new System.Drawing.Size(81, 13);
+            this.ContentsFolderLabel.Size = new System.Drawing.Size(240, 13);
             this.ContentsFolderLabel.TabIndex = 7;
-            this.ContentsFolderLabel.Text = "Contents folder:";
+            this.ContentsFolderLabel.Text = "Contents folder (leave empty for info-only update):";
             // 
             // ContentsFolderTextBox
             // 
@@ -202,9 +202,9 @@
             this.ChangelogLabel.AutoSize = true;
             this.ChangelogLabel.Location = new System.Drawing.Point(277, 202);
             this.ChangelogLabel.Name = "ChangelogLabel";
-            this.ChangelogLabel.Size = new System.Drawing.Size(61, 13);
+            this.ChangelogLabel.Size = new System.Drawing.Size(210, 13);
             this.ChangelogLabel.TabIndex = 14;
-            this.ChangelogLabel.Text = "Changelog:";
+            this.ChangelogLabel.Text = "Changelog (leave empty for no changelog):";
             // 
             // ChangelogRichTextBox
             // 

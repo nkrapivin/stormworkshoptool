@@ -536,7 +536,12 @@ namespace StormWorkshopTool
                 }
             }
 
-            var call = SteamUGC.SubmitItemUpdate(update, item.Changelog);
+            var changelog = item.Changelog;
+            // as per Steamworks SDK docs, this must be `null` for no change note...
+            if (string.IsNullOrWhiteSpace(changelog))
+                changelog = null;
+
+            var call = SteamUGC.SubmitItemUpdate(update, changelog);
             if (call == SteamAPICall_t.Invalid)
             {
                 ShowError("SubmitItemUpdate failed");
