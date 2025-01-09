@@ -19,6 +19,7 @@ namespace StormWorkshopTool
         private AppId_t AppID;
         private uint LoadPageIdx = 1;
         private CallResult<SteamUGCQueryCompleted_t> CROnUGCQueryCompleted;
+        private CallResult<WorkshopEULAStatus_t> CROnWorkshopEULAStatus;
         private Callback<AvatarImageLoaded_t> COnAvatarImageLoaded;
         private readonly List<UGCItem> Items = new List<UGCItem>();
         private readonly Dictionary<UGCHandle_t, CallResult<RemoteStorageDownloadUGCResult_t>> PinnedCRs = new Dictionary<UGCHandle_t, CallResult<RemoteStorageDownloadUGCResult_t>>();
@@ -42,7 +43,11 @@ namespace StormWorkshopTool
         }
 
         private void UpdateProgressLabel()
-            => ProgressLabel.Text = $"Fetching your items... (Page: {LoadPageIdx}, Preview pics: {PinnedCRs.Count} left)";
+            => ProgressLabel.Text = Localize.Tr(
+                "Fetching your items... (Page: {0}, Preview pics: {1} left)",
+                "MainForm.ProgressLabel.Text.Fetching",
+                LoadPageIdx,
+                PinnedCRs.Count);
 
         private void SetUILockState(bool state)
         {
@@ -67,7 +72,9 @@ namespace StormWorkshopTool
                 var lvitem = new ListViewItem
                 {
                     Text =
-                    (string.IsNullOrEmpty(item.Title) ? "(Untitled)" : item.Title)
+                    (string.IsNullOrWhiteSpace(item.Title)
+                        ? Localize.Tr("(Untitled)", "MainForm.MyItemsListView.Text.Untitled")
+                        : item.Title)
                     //+ (item.)
                 };
                 if (item.Preview != null)
@@ -120,6 +127,20 @@ namespace StormWorkshopTool
             //}
         }
 
+        private void OnWorkshopEULAStatus(WorkshopEULAStatus_t param, bool bIOFailure)
+        {
+            // TODO: m_bNeedsAction does not work in case of Caribbean Legend
+            //       because CL is using the default EULA which confuses this call.
+            if (param.m_unVersion == 0 || param.m_rtAction.m_RTime32 == 0)
+            {
+                ProcessStart("https://steamcommunity.com/sharedfiles/workshoplegalagreement");
+                ShowError(Localize.Tr(
+                    "You must accept the Steam Workshop legal agreement. Please accept it, and then try again if necessary.",
+                    "MainForm.MustAcceptAgreement")
+                );
+            }
+        }
+
         private void OnAvatarImageLoaded(AvatarImageLoaded_t param)
         {
             if (param.m_steamID != SteamID)
@@ -132,13 +153,23 @@ namespace StormWorkshopTool
         {
             if (param.m_eResult != EResult.k_EResultOK)
             {
-                ShowError($"Failed to update item with EResult {param.m_eResult}");
+                ShowError(Localize.Tr(
+                    "Failed to update item with EResult {0}",
+                    "MainForm.OnItemUpdateFail",
+                    param.m_eResult)
+                );
                 return;
             }
 
             if (param.m_bUserNeedsToAcceptWorkshopLegalAgreement)
             {
+                // this should silently invoke the default browser
+                // and persuade the user to accept the agreement....
                 ProcessStart("https://steamcommunity.com/sharedfiles/workshoplegalagreement");
+                ShowError(Localize.Tr(
+                    "You must accept the Steam Workshop legal agreement. Please accept it, and then try again if necessary.",
+                    "MainForm.MustAcceptAgreement")
+                );
             }
         }
 
@@ -149,13 +180,20 @@ namespace StormWorkshopTool
 
             if (param.m_eResult != EResult.k_EResultOK || bIOFailure)
             {
-                Debug.WriteLine($"UGC remote download fail with eresult {param.m_eResult}");
+                Debug.WriteLine(Localize.Tr(
+                    "UGC remote download fail with EResult {0}",
+                    "MainForm.UGCDownloadFailCode",
+                    param.m_eResult)
+                );
                 return;
             }
 
             if (param.m_nSizeInBytes <= 0)
             {
-                Debug.WriteLine($"UGC remote download fail, file is empty");
+                Debug.WriteLine(Localize.Tr(
+                    "UGC remote download fail, file is empty",
+                    "MainForm.UGCDownloadFailEmpty")
+                );
                 return;
             }
 
@@ -177,7 +215,11 @@ namespace StormWorkshopTool
         {
             if (param.m_eResult != EResult.k_EResultOK)
             {
-                ShowError($"OnCreateItem invalid EResult ({param.m_eResult})");
+                ShowError(Localize.Tr(
+                    "OnCreateItem invalid EResult {0}",
+                    "MainForm.OnCreateItemFail",
+                    param.m_eResult)
+                );
                 return;
             }
 
@@ -189,7 +231,11 @@ namespace StormWorkshopTool
         {
             if (param.m_eResult != EResult.k_EResultOK)
             {
-                ShowError($"OnUGCQueryCompleted invalid EResult ({param.m_eResult})");
+                ShowError(Localize.Tr(
+                    "OnUGCQueryCompleted invalid EResult {0}",
+                    "MainForm.OnUGCQueryCompletedFail",
+                    param.m_eResult)
+                );
                 return;
             }
 
@@ -208,13 +254,16 @@ namespace StormWorkshopTool
                 }
 
                 var item = new UGCItem();
-                var previewhandle = SteamRemoteStorage.UGCDownload(details.m_hPreviewFile, 0);
-                if (previewhandle != SteamAPICall_t.Invalid)
+                if (details.m_hPreviewFile != UGCHandle_t.Invalid)
                 {
-                    item.PreviewHandle = details.m_hPreviewFile;
-                    var cr = CallResult<RemoteStorageDownloadUGCResult_t>.Create(OnRemoteStorageDownloadUGC);
-                    cr.Set(previewhandle);
-                    PinnedCRs[details.m_hPreviewFile] = cr;
+                    var previewhandle = SteamRemoteStorage.UGCDownload(details.m_hPreviewFile, 0);
+                    if (previewhandle != SteamAPICall_t.Invalid)
+                    {
+                        item.PreviewHandle = details.m_hPreviewFile;
+                        var cr = CallResult<RemoteStorageDownloadUGCResult_t>.Create(OnRemoteStorageDownloadUGC);
+                        cr.Set(previewhandle);
+                        PinnedCRs[details.m_hPreviewFile] = cr;
+                    }
                 }
                 item.Title = details.m_rgchTitle;
                 item.Description = details.m_rgchDescription;
@@ -225,7 +274,10 @@ namespace StormWorkshopTool
 
             if (!SteamUGC.ReleaseQueryUGCRequest(param.m_handle))
             {
-                ShowError("ReleaseQueryUGCRequest (inside CR) failed");
+                ShowError(Localize.Tr(
+                    "ReleaseQueryUGCRequest (inside CR) failed",
+                    "MainForm.ReleaseQueryUGCRequestInsideCRFail")
+                );
                 return;
             }
 
@@ -240,7 +292,10 @@ namespace StormWorkshopTool
             );
             if (handle == UGCQueryHandle_t.Invalid)
             {
-                ShowError("CreateQueryUserUGCRequest (inside CR) failed");
+                ShowError(Localize.Tr(
+                    "CreateQueryUserUGCRequest (inside CR) failed",
+                    "MainForm.CreateQueryUserUGCRequestInsideCRFail")
+                );
                 return;
             }
 
@@ -250,7 +305,10 @@ namespace StormWorkshopTool
             if (call == SteamAPICall_t.Invalid)
             {
                 SteamUGC.ReleaseQueryUGCRequest(handle);
-                ShowError("SendQueryUGCRequest (inside CR) failed");
+                ShowError(Localize.Tr(
+                    "SendQueryUGCRequest (inside CR) failed",
+                    "MainForm.SendQueryUGCRequestInsideCRFail")
+                );
                 return;
             }
             CROnUGCQueryCompleted.Set(call);
@@ -265,12 +323,12 @@ namespace StormWorkshopTool
 
         private void ShowError(string text)
         {
-            MessageBox.Show(this, text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, text, Localize.Tr("Error", "CommonError"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void ShowInfo(string text)
         {
-            MessageBox.Show(this, text, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, text, Localize.Tr("Information", "CommonInformation"), MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void LoadAllItems()
@@ -282,11 +340,15 @@ namespace StormWorkshopTool
                 EUserUGCListSortOrder.k_EUserUGCListSortOrder_CreationOrderDesc,
                 AppID,
                 AppID,
-                /*start at page*/1
+                /* start at page index */ 1
             );
             if (handle == UGCQueryHandle_t.Invalid)
             {
-                ShowError("CreateQueryUserUGCRequest failed");
+                ShowError(
+                    Localize.Tr(
+                        "CreateQueryUserUGCRequest failed",
+                        "MainForm.CreateQueryUserUGCRequestFail")
+                );
                 return;
             }
 
@@ -296,7 +358,11 @@ namespace StormWorkshopTool
             if (call == SteamAPICall_t.Invalid)
             {
                 SteamUGC.ReleaseQueryUGCRequest(handle);
-                ShowError("SendQueryUGCRequest failed");
+                ShowError(
+                    Localize.Tr(
+                        "SendQueryUGCRequest failed",
+                        "MainForm.SendQueryUGCRequestFail")
+                );
                 return;
             }
 
@@ -314,28 +380,69 @@ namespace StormWorkshopTool
         private void MainForm_Load(object sender, EventArgs e)
         {
             var appId = 0u;
-            using (var dlg = new AppIDForm())
+            var forcedAppId = false;
+            try
             {
-                var result = dlg.ShowDialog(this);
-                if (result != DialogResult.Yes)
+                // If this file exists, it will attempt to initialize itself
+                // like a normal game would.
+                // There is no call to RestartAppIfNecessary because it always
+                // starts the "Default" option (which is the game)
+                var d = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "depot_appid.txt"));
+                var testAppId = uint.Parse(d.Trim());
+                if (testAppId != 0)
                 {
+                    appId = testAppId;
+                    forcedAppId = true;
+                    Debug.WriteLine($"App ID (forced) = {appId}");
+                }
+            }
+            catch { }
+
+            if (!forcedAppId)
+            {
+                using (var dlg = new AppIDForm())
+                {
+                    var result = dlg.ShowDialog(this);
+                    if (result != DialogResult.Yes)
+                    {
+                        Application.Exit();
+                        return;
+                    }
+
+                    appId = dlg.ChosenAppId;
+                }
+
+                Debug.WriteLine($"App ID (dialog) = {appId}");
+
+                try
+                {
+                    // NOTE: Steam API should read from the current directory,
+                    //       not the app directory... I think... :|
+                    File.WriteAllText("steam_appid.txt", appId.ToString(), System.Text.Encoding.ASCII);
+                }
+                catch
+                {
+                    ShowError(Localize.Tr(
+                        "Unable to write the steam_appid.txt file, Steam API won't initialize properly",
+                        "MainForm.SteamAppIdTxt")
+                    );
                     Application.Exit();
                     return;
                 }
-
-                appId = dlg.ChosenAppId;
             }
-
-            File.WriteAllText("steam_appid.txt", appId.ToString(), System.Text.Encoding.ASCII);
 
             if (!SteamAPI.Init())
             {
-                ShowError("Failed to initialize the Steam API");
+                ShowError(Localize.Tr(
+                    "Failed to initialize the Steam API. Is the Steam client running and online?",
+                    "MainForm.SteamApiInitFail")
+                );
                 Application.Exit();
                 return;
             }
 
             CROnUGCQueryCompleted = CallResult<SteamUGCQueryCompleted_t>.Create(OnUGCQueryCompleted);
+            CROnWorkshopEULAStatus = CallResult<WorkshopEULAStatus_t>.Create(OnWorkshopEULAStatus);
             COnAvatarImageLoaded = Callback<AvatarImageLoaded_t>.Create(OnAvatarImageLoaded);
             PendingItemCR = CallResult<CreateItemResult_t>.Create(OnCreateItem);
             PendingItemUpdateCR = CallResult<SubmitItemUpdateResult_t>.Create(OnItemUpdate);
@@ -343,22 +450,33 @@ namespace StormWorkshopTool
             AppID = SteamUtils.GetAppID();
             if (AppID == AppId_t.Invalid)
             {
-                ShowError("GetAppID failed");
+                ShowError(Localize.Tr(
+                    "GetAppID failed",
+                    "MainForm.SteamApiGetAppIdFail")
+                );
                 Application.Exit();
                 return;
             }
 
             if (AppID != (AppId_t)appId)
             {
-                ShowError($"GetAppID result ({AppID}) does not match expected App ID ({appId}), expect bugs!");
+                ShowError(Localize.Tr(
+                    "GetAppID result {0} does not match expected App ID {1}, expect bugs!",
+                    "MainForm.AppIdMismatch",
+                    AppID, appId)
+                );
             }
 
-            Text += $" (as App ID {AppID})";
+            Text = Localize.Tr(Text, "MainForm.Text", AppID);
+            GameWorkshopLinkLabel.Text = Localize.Tr(GameWorkshopLinkLabel.Text, "MainForm.GameWorkshopLinkLabel.Text");
 
             SteamID = SteamUser.GetSteamID();
             if (!SteamID.IsValid())
             {
-                ShowError("GetSteamID failed (or invalid)");
+                ShowError(Localize.Tr(
+                    "GetSteamID failed (or invalid)",
+                    "MainForm.GetSteamIdFail")
+                );
                 Application.Exit();
                 return;
             }
@@ -366,21 +484,34 @@ namespace StormWorkshopTool
             var personaName = SteamFriends.GetPersonaName();
             if (string.IsNullOrEmpty(personaName))
             {
-                ShowError("GetPersonaName failed");
+                ShowError(Localize.Tr(
+                    "GetPersonaName failed",
+                    "MainForm.GetPersonaNameFail")
+                );
                 Application.Exit();
                 return;
             }
-            PersonaNameLabel.Text = personaName;
+            PersonaNameLabel.Text = personaName; // NOLOC
 
-            SteamIDLabel.Text = SteamID.ToString();
+            var eulaCall = SteamUGC.GetWorkshopEULAStatus();
+            if (eulaCall != SteamAPICall_t.Invalid)
+            {
+                CROnWorkshopEULAStatus.Set(eulaCall, OnWorkshopEULAStatus);
+            }
+
+            SteamIDLabel.Text = SteamID.ToString(); // NOLOC
             var imgHandle = SteamFriends.GetLargeFriendAvatar(SteamID);
             SetAvatarToUI(imgHandle);
             LoadAllItems();
 
+            var toolVerNative = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            ToolVersionLabel.Text = Localize.Tr(
+                ToolVersionLabel.Text,
+                "MainForm.ToolVersionLabel.Text",
+                toolVerNative);
+
             // now we can enable the timer and dispatch callbacks/callresults
             SteamTimer.Enabled = true;
-
-            ToolVersionLabel.Text += Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private void SteamTimer_Tick(object sender, EventArgs e)
@@ -395,7 +526,9 @@ namespace StormWorkshopTool
                     // dirty dirty hack, but my deadline was till 12th so oh well
                     // what could I do?!
                     if (PendingItemCR.IsActive())
-                        ProgressLabel.Text = "Waiting for CreateItem to complete...";
+                        ProgressLabel.Text = Localize.Tr(
+                            "Waiting for CreateItem to complete...",
+                            "MainForm.ProgressLabel.Text.Creating");
                 }
 
                 if (PendingItem != null)
@@ -408,8 +541,7 @@ namespace StormWorkshopTool
                     }
                     else if (PendingItemCR.IsActive())
                     {
-                        //this moved to another place...
-                        //ProgressLabel.Text = "Waiting for CreateItem to complete...";
+                        // this moved to another place...
                     }
                     else
                     {
@@ -428,7 +560,11 @@ namespace StormWorkshopTool
                             PendingBytesTotal = newTotal;
 
                             var statusString = PendingStatus.ToString().Replace("k_EItemUpdateStatus", "");
-                            ProgressLabel.Text = $"Updating item ({statusString}): {newProcessed} out of {newTotal} bytes";
+                            ProgressLabel.Text =
+                                Localize.Tr(
+                                    "Updating item (status {0}): {1} out of {2} bytes",
+                                    "MainForm.ProgressLabel.Text.Updating",
+                                    statusString, newProcessed, newTotal);
                         }
                     }
                 }
@@ -452,7 +588,10 @@ namespace StormWorkshopTool
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Debug.WriteLine("FormClosed: Shutting down Steam API...");
+            Debug.WriteLine(Localize.Tr(
+                "Shutting down Steam API...",
+                "MainForm.OnClosedDebug")
+            );
             SteamAPI.Shutdown();
         }
 
@@ -477,13 +616,19 @@ namespace StormWorkshopTool
             var update = SteamUGC.StartItemUpdate(AppID, item.Id);
             if (update == UGCUpdateHandle_t.Invalid)
             {
-                ShowError("StartItemUpdate failed");
+                ShowError(Localize.Tr(
+                    "StartItemUpdate failed (do you have access to the item?)",
+                    "MainForm.StartItemUpdateFail")
+                );
                 return;
             }
 
             if (!SteamUGC.SetItemUpdateLanguage(update, "english"))
             {
-                ShowError("SetItemUpdateLanguage failed");
+                ShowError(Localize.Tr(
+                    "SetItemUpdateLanguage failed",
+                    "MainForm.SetItemUpdateLanguageFail")
+                );
                 return;
             }
 
@@ -491,7 +636,10 @@ namespace StormWorkshopTool
             {
                 if (!SteamUGC.SetItemTitle(update, item.Title))
                 {
-                    ShowError("SetItemTitle failed");
+                    ShowError(Localize.Tr(
+                        "SetItemTitle failed (try shortening the title)",
+                        "MainForm.SetItemTitleFail")
+                    );
                     return;
                 }
             }
@@ -500,14 +648,20 @@ namespace StormWorkshopTool
             {
                 if (!SteamUGC.SetItemDescription(update, item.Description))
                 {
-                    ShowError("SetItemDescription failed");
+                    ShowError(Localize.Tr(
+                        "SetItemDescription failed (try shortening the description)",
+                        "MainForm.SetItemDescriptionFail")
+                    );
                     return;
                 }
             }
             
             if (!SteamUGC.SetItemVisibility(update, item.Visibility))
             {
-                ShowError("SetItemVisibility failed");
+                ShowError(Localize.Tr(
+                    "SetItemVisibility failed (try setting Private)",
+                    "MainForm.SetItemVisibilityFail")
+                );
                 return;
             }
 
@@ -515,23 +669,38 @@ namespace StormWorkshopTool
             {
                 if (!SteamUGC.SetItemContent(update, item.ContentsFolder))
                 {
-                    ShowError("SetItemContent failed");
+                    ShowError(Localize.Tr(
+                        "SetItemContent failed (do you have access to the folder?)",
+                        "MainForm.SetItemContentFail")
+                    );
                     return;
                 }
             }
 
             if (item.Preview != null && item.Dirty.HasFlag(UGCItem.DirtyFlags.Preview))
             {
-                var tmpname = IsPNGHeader(item.Preview) ? "0a_preview.png" : "0a_preview.jpg";
-                var tmpfile = Path.Combine(
-                    Path.GetTempPath(),
-                    tmpname
-                );
+                var tmpname = IsPNGHeader(item.Preview) ? "00a_preview.png" : "00a_preview.jpg";
+                var tmpfile = Path.Combine(Path.GetTempPath(),tmpname);
 
-                File.WriteAllBytes(tmpfile, item.Preview);
+                try
+                {
+                    File.WriteAllBytes(tmpfile, item.Preview);
+                }
+                catch
+                {
+                    ShowError(Localize.Tr(
+                        "Failed to write the preview image.",
+                        "MainForm.ImageWriteFail")
+                    );
+                    return;
+                }
+
                 if (!SteamUGC.SetItemPreview(update, tmpfile))
                 {
-                    ShowError("SetItemPreview failed");
+                    ShowError(Localize.Tr(
+                        "SetItemPreview failed (is the picture valid? try compressing it)",
+                        "MainForm.SetItemPreviewFail")
+                    );
                     return;
                 }
             }
@@ -544,7 +713,10 @@ namespace StormWorkshopTool
             var call = SteamUGC.SubmitItemUpdate(update, changelog);
             if (call == SteamAPICall_t.Invalid)
             {
-                ShowError("SubmitItemUpdate failed");
+                ShowError(Localize.Tr(
+                    "SubmitItemUpdate failed",
+                    "MainForm.SubmitItemUpdateFail")
+                );
                 return;
             }
 
@@ -563,7 +735,10 @@ namespace StormWorkshopTool
                 var call = SteamUGC.CreateItem(AppID, EWorkshopFileType.k_EWorkshopFileTypeCommunity);
                 if (call == SteamAPICall_t.Invalid)
                 {
-                    ShowError("CreateItem call failed");
+                    ShowError(Localize.Tr(
+                        "CreateItem call failed (in PublishItem)",
+                        "MainForm.CreateItemInPublishFail")
+                    );
                     return;
                 }
 
@@ -622,6 +797,11 @@ namespace StormWorkshopTool
                 // prevent closing if we're updating something
                 e.Cancel = true;
             }
+        }
+
+        private void AvatarPictureBox_Click(object sender, EventArgs e)
+        {
+            ProcessStart($"https://steamcommunity.com/profiles/{SteamID}");
         }
 
         private void RefreshItemsButton_Click(object sender, EventArgs e)

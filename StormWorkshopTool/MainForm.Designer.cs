@@ -57,6 +57,7 @@
             this.AvatarPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.AvatarPictureBox.TabIndex = 0;
             this.AvatarPictureBox.TabStop = false;
+            this.AvatarPictureBox.Click += new System.EventHandler(this.AvatarPictureBox_Click);
             // 
             // PersonaNameLabel
             // 
@@ -134,11 +135,12 @@
             // 
             this.ToolVersionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ToolVersionLabel.AutoSize = true;
-            this.ToolVersionLabel.Location = new System.Drawing.Point(683, 9);
+            this.ToolVersionLabel.Location = new System.Drawing.Point(702, 9);
             this.ToolVersionLabel.Name = "ToolVersionLabel";
-            this.ToolVersionLabel.Size = new System.Drawing.Size(72, 13);
+            this.ToolVersionLabel.Size = new System.Drawing.Size(86, 13);
             this.ToolVersionLabel.TabIndex = 7;
-            this.ToolVersionLabel.Text = "Tool Version: ";
+            this.ToolVersionLabel.Text = "Tool Version: {0}";
+            this.ToolVersionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // MainForm
             // 
@@ -157,7 +159,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(810, 480);
             this.Name = "MainForm";
-            this.Text = "Storm Workshop Tool";
+            this.Text = "Storm Workshop Tool (as AppID {0})";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);

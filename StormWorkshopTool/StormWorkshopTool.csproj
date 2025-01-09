@@ -93,6 +93,7 @@
     <Compile Include="ItemEditForm.Designer.cs">
       <DependentUpon>ItemEditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Localize.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,6 +136,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="rus-loc.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="steam_appid.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

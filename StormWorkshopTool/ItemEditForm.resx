@@ -120,13 +120,6 @@
   <metadata name="PreviewImageOpenFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="ChangelogRichTextBox.Text" xml:space="preserve">
-    <value>For your first submission - this can be anything sensible (i.e. "First Version").
-For updates - please specify what you have changed in detail.
-Leave empty for no changelog.
-
-Thank you for your cooperation :)</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

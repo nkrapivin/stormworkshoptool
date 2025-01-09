@@ -10,6 +10,14 @@ namespace StormWorkshopTool
         public AppIDForm()
         {
             InitializeComponent();
+            Localize.Load();
+            Text = Localize.Tr(Text, "AppIDForm.Text");
+            SelectLabel.Text = Localize.Tr(SelectLabel.Text, "AppIDForm.SelectLabel.Text");
+            CLFullButton.Text = Localize.Tr(CLFullButton.Text, "AppIDForm.CLFullButton.Text");
+            CLSandboxButton.Text = Localize.Tr(CLSandboxButton.Text, "AppIDForm.CLSandboxButton.Text");
+
+            // show the expecting culture name
+            Text += " (" + Localize.CultureName + ")";
         }
 
         private void CloseWithAppId(uint appId)

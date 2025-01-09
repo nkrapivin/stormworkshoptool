@@ -20,6 +20,25 @@ namespace StormWorkshopTool
         public ItemEditForm()
         {
             InitializeComponent();
+            Text = Localize.Tr(Text, "ItemEditForm.Text");
+            IDLabel.Text = Localize.Tr(IDLabel.Text, "ItemEditForm.IDLabel.Text");
+            TitleLabel.Text = Localize.Tr(TitleLabel.Text, "ItemEditForm.TitleLabel.Text");
+            EditTitleCheckBox.Text = Localize.Tr(EditTitleCheckBox.Text, "ItemEditForm.EditTitleCheckBox.Text");
+            VisibilityLabel.Text = Localize.Tr(VisibilityLabel.Text, "ItemEditForm.VisibilityLabel.Text");
+            VisibilityComboBox.Items[0] = Localize.Tr((string)VisibilityComboBox.Items[0], "ItemEditForm.VisibilityComboBox.Items.0.Text");
+            VisibilityComboBox.Items[1] = Localize.Tr((string)VisibilityComboBox.Items[1], "ItemEditForm.VisibilityComboBox.Items.1.Text");
+            VisibilityComboBox.Items[2] = Localize.Tr((string)VisibilityComboBox.Items[2], "ItemEditForm.VisibilityComboBox.Items.2.Text");
+            VisibilityComboBox.Items[3] = Localize.Tr((string)VisibilityComboBox.Items[3], "ItemEditForm.VisibilityComboBox.Items.3.Text");
+            ContentsFolderLabel.Text = Localize.Tr(ContentsFolderLabel.Text, "ItemEditForm.ContentsFolderLabel.Text");
+            PreviewImageLabel.Text = Localize.Tr(PreviewImageLabel.Text, "ItemEditForm.PreviewImageLabel.Text");
+            DescriptionLabel.Text = Localize.Tr(DescriptionLabel.Text, "ItemEditForm.DescriptionLabel.Text");
+            EditDescriptionCheckBox.Text = Localize.Tr(EditDescriptionCheckBox.Text, "ItemEditForm.EditDescriptionCheckBox.Text");
+            ChangelogLabel.Text = Localize.Tr(ChangelogLabel.Text, "ItemEditForm.ChangelogLabel.Text");
+            ChangelogRichTextBox.Text = Localize.Tr(ChangelogRichTextBox.Text, "ItemEditForm.ChangelogRichTextBox.Text");
+            EditWebsiteLinkLabel.Text = Localize.Tr(EditWebsiteLinkLabel.Text, "ItemEditForm.EditWebsiteLinkLabel.Text");
+            AgreementPrefixLabel.Text = Localize.Tr(AgreementPrefixLabel.Text, "ItemEditForm.AgreementPrefixLabel.Text");
+            AgreementLinkLabel.Text = Localize.Tr(AgreementLinkLabel.Text, "ItemEditForm.AgreementLinkLabel.Text");
+            PublishButton.Text = Localize.Tr(PublishButton.Text, "ItemEditForm.PublishButton.Text");
             // non-browsable fields: >:(((
             VisibilityComboBox.SelectedIndex = 0;
             PreviewImagePictureBox.AllowDrop = true;
@@ -31,6 +50,8 @@ namespace StormWorkshopTool
             EditWebsiteLinkLabel.Visible = false;
             EditDescriptionCheckBox.Visible = false;
             EditTitleCheckBox.Visible = false;
+
+            ContentsFolderCommonOpenFileDialog.Title = Localize.Tr(ContentsFolderCommonOpenFileDialog.Title, "ItemEditForm.ContentsFolderCommonOpenFileDialog.Text");
         }
 
         private bool IsValidDirectory(string path)
@@ -55,19 +76,20 @@ namespace StormWorkshopTool
                 {
                     // allow modmakers to push info-only edits without doing content updates
                     var res = MessageBox.Show(this,
-                        "You are about to publish a mod update without any content changes. Are you sure?",
-                        "Question",
+                        Localize.Tr("You are about to publish a mod update without any content changes. Are you sure?", "ItemEditForm.QuestionNoContent"),
+                        Localize.Tr("Question", "CommonQuestion"),
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question);
                     if (res != DialogResult.Yes)
                         return false; // did not explicitly confirm...
+                    ContentsFolderTextBox.Text = "";
                 }
                 else
                 {
                     // always reject, 1.0.0 mod submissions must be with content
                     MessageBox.Show(this,
-                        "Contents folder is empty or invalid. For new mods you MUST specify a content folder.",
-                        "Error",
+                        Localize.Tr("Contents folder is empty or invalid. For new mods you MUST specify a content folder.", "ItemEditForm.NoFolder"),
+                        Localize.Tr("Error", "CommonError"),
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     return false;
@@ -86,9 +108,9 @@ namespace StormWorkshopTool
             IDTextBox.Text = CurrentUGCItem.Id.ToString();
             TitleTextBox.Text = CurrentUGCItem.Title;
             DescriptionRichTextBox.Text = CurrentUGCItem.Description;
-            ChangelogRichTextBox.Text = "<please fill this in before submitting!>";
+            ChangelogRichTextBox.Text = Localize.Tr("Generic update.", "ItemEditForm.DummyChangelog");
             VisibilityComboBox.SelectedIndex = (int)CurrentUGCItem.Visibility;
-            ContentsFolderTextBox.Text = "<please select a new folder!>";
+            ContentsFolderTextBox.Text = Localize.Tr("<please your folder again!>", "ItemEditForm.SelectSameFolder");
             if (item.Preview != null)
             {
                 try
@@ -212,8 +234,8 @@ namespace StormWorkshopTool
                 {
                     // https://partner.steamgames.com/doc/api/ISteamUGC#SubmitItemUpdateResult_t
                     MessageBox.Show(this,
-                        "The preview image is too large, it must be less than 1 Megabyte. Try reducing resolution or details.",
-                        "Error",
+                        Localize.Tr("Preview image is larger than 1 megabyte. Try resizing or compressing the image.", "ItemEditForm.ImageTooLarge"),
+                        Localize.Tr("Error", "CommonError"),
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     return;

@@ -149,9 +149,9 @@
             // PublishButton
             // 
             this.PublishButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.PublishButton.Location = new System.Drawing.Point(734, 508);
+            this.PublishButton.Location = new System.Drawing.Point(688, 508);
             this.PublishButton.Name = "PublishButton";
-            this.PublishButton.Size = new System.Drawing.Size(75, 23);
+            this.PublishButton.Size = new System.Drawing.Size(121, 23);
             this.PublishButton.TabIndex = 19;
             this.PublishButton.Text = "Publish";
             this.PublishButton.UseVisualStyleBackColor = true;
@@ -202,9 +202,9 @@
             this.ChangelogLabel.AutoSize = true;
             this.ChangelogLabel.Location = new System.Drawing.Point(277, 202);
             this.ChangelogLabel.Name = "ChangelogLabel";
-            this.ChangelogLabel.Size = new System.Drawing.Size(210, 13);
+            this.ChangelogLabel.Size = new System.Drawing.Size(272, 13);
             this.ChangelogLabel.TabIndex = 14;
-            this.ChangelogLabel.Text = "Changelog (leave empty for no changelog):";
+            this.ChangelogLabel.Text = "Changelog, common for all languages, can be left blank:";
             // 
             // ChangelogRichTextBox
             // 
@@ -215,7 +215,7 @@
             this.ChangelogRichTextBox.Name = "ChangelogRichTextBox";
             this.ChangelogRichTextBox.Size = new System.Drawing.Size(529, 284);
             this.ChangelogRichTextBox.TabIndex = 15;
-            this.ChangelogRichTextBox.Text = resources.GetString("ChangelogRichTextBox.Text");
+            this.ChangelogRichTextBox.Text = "First version.";
             // 
             // AgreementPrefixLabel
             // 
@@ -233,7 +233,7 @@
             this.AgreementLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AgreementLinkLabel.AutoSize = true;
-            this.AgreementLinkLabel.Location = new System.Drawing.Point(211, 518);
+            this.AgreementLinkLabel.Location = new System.Drawing.Point(221, 518);
             this.AgreementLinkLabel.Name = "AgreementLinkLabel";
             this.AgreementLinkLabel.Size = new System.Drawing.Size(163, 13);
             this.AgreementLinkLabel.TabIndex = 18;
@@ -276,8 +276,10 @@
             // 
             // EditDescriptionCheckBox
             // 
+            this.EditDescriptionCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.EditDescriptionCheckBox.AutoSize = true;
-            this.EditDescriptionCheckBox.Location = new System.Drawing.Point(349, 14);
+            this.EditDescriptionCheckBox.Location = new System.Drawing.Point(410, 14);
             this.EditDescriptionCheckBox.Name = "EditDescriptionCheckBox";
             this.EditDescriptionCheckBox.Size = new System.Drawing.Size(139, 17);
             this.EditDescriptionCheckBox.TabIndex = 12;
@@ -287,8 +289,10 @@
             // 
             // EditTitleCheckBox
             // 
+            this.EditTitleCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.EditTitleCheckBox.AutoSize = true;
-            this.EditTitleCheckBox.Location = new System.Drawing.Point(51, 53);
+            this.EditTitleCheckBox.Location = new System.Drawing.Point(148, 53);
             this.EditTitleCheckBox.Name = "EditTitleCheckBox";
             this.EditTitleCheckBox.Size = new System.Drawing.Size(104, 17);
             this.EditTitleCheckBox.TabIndex = 3;
