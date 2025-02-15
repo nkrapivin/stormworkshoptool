@@ -6,6 +6,8 @@ Welcome! This is the source code of the Storm Workshop Tool.
 
 Though it is currently designed for [Caribbean Legend](https://store.steampowered.com/app/2230980/Caribbean_Legend/), the tool itself is generic and can be used with (almost) any Workshop-enabled game.
 
+![image](https://github.com/user-attachments/assets/6c231b16-5254-42b1-bf3a-7662577d71e8)
+
 ### How do I make mods for Caribbean Legend?
 
 Please refer to [this wiki](https://github.com/nkrapivin/stormworkshoptool/wiki).
