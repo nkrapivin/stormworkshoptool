@@ -278,12 +278,13 @@
             // 
             this.EditDescriptionCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.EditDescriptionCheckBox.AutoSize = true;
-            this.EditDescriptionCheckBox.Location = new System.Drawing.Point(410, 14);
+            this.EditDescriptionCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.EditDescriptionCheckBox.Location = new System.Drawing.Point(559, 11);
             this.EditDescriptionCheckBox.Name = "EditDescriptionCheckBox";
-            this.EditDescriptionCheckBox.Size = new System.Drawing.Size(139, 17);
+            this.EditDescriptionCheckBox.Size = new System.Drawing.Size(250, 17);
             this.EditDescriptionCheckBox.TabIndex = 12;
             this.EditDescriptionCheckBox.Text = "Update the description?";
+            this.EditDescriptionCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.EditDescriptionCheckBox.UseVisualStyleBackColor = true;
             this.EditDescriptionCheckBox.CheckedChanged += new System.EventHandler(this.EditDescriptionCheckBox_CheckedChanged);
             // 
@@ -291,12 +292,13 @@
             // 
             this.EditTitleCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.EditTitleCheckBox.AutoSize = true;
-            this.EditTitleCheckBox.Location = new System.Drawing.Point(148, 53);
+            this.EditTitleCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.EditTitleCheckBox.Location = new System.Drawing.Point(121, 53);
             this.EditTitleCheckBox.Name = "EditTitleCheckBox";
-            this.EditTitleCheckBox.Size = new System.Drawing.Size(104, 17);
+            this.EditTitleCheckBox.Size = new System.Drawing.Size(150, 17);
             this.EditTitleCheckBox.TabIndex = 3;
             this.EditTitleCheckBox.Text = "Update the title?";
+            this.EditTitleCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.EditTitleCheckBox.UseVisualStyleBackColor = true;
             this.EditTitleCheckBox.CheckedChanged += new System.EventHandler(this.EditTitleCheckBox_CheckedChanged);
             // 

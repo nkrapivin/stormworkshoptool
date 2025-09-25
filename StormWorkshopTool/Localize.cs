@@ -21,6 +21,23 @@ namespace StormWorkshopTool
         private static Dictionary<string, string> Load()
         {
             var myCulture = CultureInfo.CurrentUICulture.ThreeLetterISOLanguageName.ToLowerInvariant();
+            {
+                var args = Environment.GetCommandLineArgs();
+                for (int i = 0, argc = args.Length; i < argc; ++i)
+                {
+                    var arg = args[i];
+                    if (string.IsNullOrEmpty(arg))
+                        continue;
+                    arg = arg.ToLowerInvariant().Trim();
+                    if (string.IsNullOrEmpty(arg))
+                        continue;
+                    const string forceISOLocaleParam = "/forceisolocale:";
+                    if (arg.StartsWith(forceISOLocaleParam))
+                    {
+                        myCulture = arg.Substring(forceISOLocaleParam.Length);
+                    }
+                }
+            }
             CultureName = myCulture;
             var exeDir = AppContext.BaseDirectory;
 
