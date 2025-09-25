@@ -11,17 +11,14 @@ namespace StormWorkshopTool
     /// </summary>
     public static class Localize
     {
-        private static readonly Dictionary<string, string> Replacements = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> Replacements = Load();
 
         /// <summary>
         /// Culture name expected by the tool, name your INI file {CultureName}-loc.ini
         /// </summary>
         public static string CultureName { get; private set; }
 
-        /// <summary>
-        /// Call this once to load a localization file
-        /// </summary>
-        public static void Load()
+        private static Dictionary<string, string> Load()
         {
             var myCulture = CultureInfo.CurrentUICulture.ThreeLetterISOLanguageName.ToLowerInvariant();
             CultureName = myCulture;
@@ -29,10 +26,10 @@ namespace StormWorkshopTool
 
             var textEncoding = new UTF8Encoding(false, true);
             var iniPath = Path.Combine(exeDir, myCulture + "-loc.ini");
+            var dict = new Dictionary<string, string>();
             try
             {
                 var lines = File.ReadAllLines(iniPath, textEncoding);
-                Replacements.Clear();
                 foreach (var line in lines)
                 {
                     if (string.IsNullOrWhiteSpace(line))
@@ -52,13 +49,14 @@ namespace StormWorkshopTool
                     if (string.IsNullOrWhiteSpace(key))
                         continue;
                     // not .Add so the last key's val overwrites previous if it exists...
-                    Replacements[key] = value;
+                    dict[key] = value;
                 }
             }
             catch
             {
                 /* uh no! revert to the fallback... :( */
             }
+            return dict;
         }
 
         /// <summary>

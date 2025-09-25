@@ -134,13 +134,12 @@
             // ToolVersionLabel
             // 
             this.ToolVersionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ToolVersionLabel.AutoSize = true;
-            this.ToolVersionLabel.Location = new System.Drawing.Point(702, 9);
+            this.ToolVersionLabel.Location = new System.Drawing.Point(588, 9);
             this.ToolVersionLabel.Name = "ToolVersionLabel";
-            this.ToolVersionLabel.Size = new System.Drawing.Size(86, 13);
+            this.ToolVersionLabel.Size = new System.Drawing.Size(200, 13);
             this.ToolVersionLabel.TabIndex = 7;
             this.ToolVersionLabel.Text = "Tool Version: {0}";
-            this.ToolVersionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.ToolVersionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // MainForm
             // 

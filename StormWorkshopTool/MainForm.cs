@@ -101,7 +101,7 @@ namespace StormWorkshopTool
             if (!SteamUtils.GetImageSize(imgHandle, out var width, out var height))
                 return;
 
-            if ((width * height) <= 0)
+            if (width <= 0 || height <= 0)
                 return;
 
             var bufflen = (int)width * (int)height * sizeof(int);
@@ -175,6 +175,8 @@ namespace StormWorkshopTool
 
         private void OnRemoteStorageDownloadUGC(RemoteStorageDownloadUGCResult_t param, bool bIOFailure)
         {
+            if (PinnedCRs.TryGetValue(param.m_hFile, out var pinnedCallResult))
+                pinnedCallResult?.Dispose();
             PinnedCRs.Remove(param.m_hFile);
             UpdateProgressLabel();
 
@@ -300,6 +302,11 @@ namespace StormWorkshopTool
             }
 
             SteamUGC.SetLanguage(handle, "english");
+            SteamUGC.SetReturnLongDescription(handle, true);
+            SteamUGC.SetReturnMetadata(handle, true);
+            SteamUGC.SetReturnKeyValueTags(handle, true);
+            SteamUGC.SetReturnChildren(handle, true);
+            SteamUGC.SetReturnAdditionalPreviews(handle, true);
 
             var call = SteamUGC.SendQueryUGCRequest(handle);
             if (call == SteamAPICall_t.Invalid)
@@ -353,6 +360,11 @@ namespace StormWorkshopTool
             }
 
             SteamUGC.SetLanguage(handle, "english");
+            SteamUGC.SetReturnLongDescription(handle, true);
+            SteamUGC.SetReturnMetadata(handle, true);
+            SteamUGC.SetReturnKeyValueTags(handle, true);
+            SteamUGC.SetReturnChildren(handle, true);
+            SteamUGC.SetReturnAdditionalPreviews(handle, true);
 
             var call = SteamUGC.SendQueryUGCRequest(handle);
             if (call == SteamAPICall_t.Invalid)
@@ -431,11 +443,18 @@ namespace StormWorkshopTool
                 }
             }
 
-            if (!SteamAPI.Init())
+            var initResult = SteamAPI.InitEx(out var initErrorText);
+            if (initResult != ESteamAPIInitResult.k_ESteamAPIInitResult_OK)
             {
+                var initResultText = initResult.ToString().Replace("k_ESteamAPIInitResult_", ""); // NOLOC
+                var initErrorAppend = $"\r\n{initResultText}"; // NOLOC
+                if (!string.IsNullOrWhiteSpace(initErrorText))
+                    initErrorAppend += ": " + initErrorText; // NOLOC
+                Debug.WriteLine("!!! {0}: {1}", initResult, initErrorText ?? "<null string>"); // NOLOC
                 ShowError(Localize.Tr(
                     "Failed to initialize the Steam API. Is the Steam client running and online?",
                     "MainForm.SteamApiInitFail")
+                    + initErrorAppend // append this at the end for debugging purposes
                 );
                 Application.Exit();
                 return;
@@ -508,7 +527,7 @@ namespace StormWorkshopTool
             ToolVersionLabel.Text = Localize.Tr(
                 ToolVersionLabel.Text,
                 "MainForm.ToolVersionLabel.Text",
-                toolVerNative);
+                toolVerNative) + $" / {Localize.CultureName}";
 
             // now we can enable the timer and dispatch callbacks/callresults
             SteamTimer.Enabled = true;
@@ -592,10 +611,29 @@ namespace StormWorkshopTool
                 "Shutting down Steam API...",
                 "MainForm.OnClosedDebug")
             );
+            SteamTimer.Enabled = false; // just in case
+            SteamAPI.RunCallbacks(); // last chance!
+            CROnUGCQueryCompleted?.Dispose();
+            CROnWorkshopEULAStatus?.Dispose();
+            COnAvatarImageLoaded?.Dispose();
+            PendingItemCR?.Dispose();
+            PendingItemUpdateCR?.Dispose();
+            foreach (var kvp in PinnedCRs)
+            {
+                kvp.Value?.Dispose();
+            }
+            PinnedCRs.Clear();
+            UGCImageList?.Dispose();
+            // force all finalizers to be called for dangling objects
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             SteamAPI.Shutdown();
+            // ... and one more time
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
-        private bool IsPNGHeader(byte[] b)
+        private static bool IsPNGHeader(byte[] b)
         {
             // http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html
             return
@@ -680,7 +718,7 @@ namespace StormWorkshopTool
             if (item.Preview != null && item.Dirty.HasFlag(UGCItem.DirtyFlags.Preview))
             {
                 var tmpname = IsPNGHeader(item.Preview) ? "00a_preview.png" : "00a_preview.jpg";
-                var tmpfile = Path.Combine(Path.GetTempPath(),tmpname);
+                var tmpfile = Path.Combine(Path.GetTempPath(), tmpname);
 
                 try
                 {

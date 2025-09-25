@@ -233,7 +233,7 @@
             this.AgreementLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AgreementLinkLabel.AutoSize = true;
-            this.AgreementLinkLabel.Location = new System.Drawing.Point(221, 518);
+            this.AgreementLinkLabel.Location = new System.Drawing.Point(12, 531);
             this.AgreementLinkLabel.Name = "AgreementLinkLabel";
             this.AgreementLinkLabel.Size = new System.Drawing.Size(163, 13);
             this.AgreementLinkLabel.TabIndex = 18;

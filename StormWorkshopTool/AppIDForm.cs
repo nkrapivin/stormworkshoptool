@@ -10,7 +10,6 @@ namespace StormWorkshopTool
         public AppIDForm()
         {
             InitializeComponent();
-            Localize.Load();
             Text = Localize.Tr(Text, "AppIDForm.Text");
             SelectLabel.Text = Localize.Tr(SelectLabel.Text, "AppIDForm.SelectLabel.Text");
             CLFullButton.Text = Localize.Tr(CLFullButton.Text, "AppIDForm.CLFullButton.Text");
