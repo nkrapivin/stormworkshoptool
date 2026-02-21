@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,6 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DescriptionRichTextBox.Text" xml:space="preserve">
+    <value>I am too lazy and I didn't even bother
+coming up with a description!
+Please, ban me
+from Steam Workshop if you see
+this mod with a default description!
+---
+Посмотрите на меня!
+Я лентяй, который не удосужился даже описание
+для своего мода придумать!
+Я такой ленивый! Снесите мой мод с воркшопа,
+если увидите это стандартное описание!</value>
+  </data>
   <metadata name="PreviewImageOpenFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

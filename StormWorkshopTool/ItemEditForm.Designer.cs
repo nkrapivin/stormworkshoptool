@@ -1,4 +1,4 @@
-﻿namespace StormWorkshopTool
+namespace StormWorkshopTool
 {
     partial class ItemEditForm
     {
@@ -63,7 +63,7 @@
             this.TitleTextBox.Name = "TitleTextBox";
             this.TitleTextBox.Size = new System.Drawing.Size(256, 20);
             this.TitleTextBox.TabIndex = 4;
-            this.TitleTextBox.Text = "Super Awesome Mod";
+            this.TitleTextBox.Text = "Change This Name Please";
             // 
             // TitleLabel
             // 
@@ -94,7 +94,7 @@
             this.DescriptionRichTextBox.Name = "DescriptionRichTextBox";
             this.DescriptionRichTextBox.Size = new System.Drawing.Size(529, 168);
             this.DescriptionRichTextBox.TabIndex = 13;
-            this.DescriptionRichTextBox.Text = "Super Awesome Description\nCan have multiple lines!\nAwesome!\n\n\n=^-^=";
+            this.DescriptionRichTextBox.Text = resources.GetString("DescriptionRichTextBox.Text");
             // 
             // VisibilityLabel
             // 

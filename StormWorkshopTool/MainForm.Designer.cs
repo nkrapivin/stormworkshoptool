@@ -1,4 +1,4 @@
-﻿namespace StormWorkshopTool
+namespace StormWorkshopTool
 {
     partial class MainForm
     {

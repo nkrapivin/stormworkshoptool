@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -40,7 +39,8 @@ namespace StormWorkshopTool
             AgreementLinkLabel.Text = Localize.Tr(AgreementLinkLabel.Text, "ItemEditForm.AgreementLinkLabel.Text");
             PublishButton.Text = Localize.Tr(PublishButton.Text, "ItemEditForm.PublishButton.Text");
             // non-browsable fields: >:(((
-            VisibilityComboBox.SelectedIndex = 0;
+            VisibilityComboBox.SelectedIndex = (int)ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPrivate;
+            // ^^ VisibilityComboBox items must match ERemoteStoragePublishedFileVisibility !!
             PreviewImagePictureBox.AllowDrop = true;
             ContentsFolderCommonOpenFileDialog.IsFolderPicker = true;
             ContentsFolderCommonOpenFileDialog.Title = "Choose your mod folder";
