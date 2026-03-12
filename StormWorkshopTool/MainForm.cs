@@ -129,6 +129,11 @@ namespace StormWorkshopTool
 
         private void OnWorkshopEULAStatus(WorkshopEULAStatus_t param, bool bIOFailure)
         {
+            if (param.m_eResult == EResult.k_EResultInvalidParam)
+            {
+                // NOTE: fix erroneous EULA pop up
+                return;
+            }
             // TODO: m_bNeedsAction does not work in case of Caribbean Legend
             //       because CL is using the default EULA which confuses this call.
             if (param.m_unVersion == 0 || param.m_rtAction.m_RTime32 == 0)
